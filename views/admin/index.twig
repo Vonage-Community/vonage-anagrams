@@ -1,0 +1,30 @@
+<h1>Anagrams Management</h1>
+
+<h2>Loaded Anagrams</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Current Anagram</th>
+            <th>Used?</th>
+            <th>Actions</th>
+            <th>Anagram</th>
+            <th>Solution</th>
+        </tr>
+    <thead>
+    {% for anagram in anagrams %}
+    <tr>
+        <td>{{ anagram.current }}</td>
+        <td>{{ anagram.used }}</td>
+        <td><a href="/admin/setCurrent?id={{anagram.id}}">Set Current</a> | Delete</td>
+        <td>{{ anagram.anagram }}</td>
+        <td>{{ anagram.solution }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Add New Anagram</h2>
+<form method="POST" encoding="application/x-www-form-urlencoded">
+    <label>Anagram:</label> <input name="anagram" type="text"><br />
+    <label>Solution:</label> <input name="solution" type="text"><br />
+    <input type="submit" value="Save Anagram">
+</form>

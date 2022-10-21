@@ -1,0 +1,14 @@
+{
+  "development": {
+    "use_env_variable": "DB_DSN",
+    "dialect": "postgres"
+  },
+  "test": {
+    "use_env_variable": "DB_DSN",
+    "dialect": "postgres"
+  },
+  "production": {
+    "use_env_variable": "DB_DSN",
+    "dialect": "postgres"
+  }
+}
