@@ -19,10 +19,10 @@ async function admin_home(ctx) {
 const app = new Koa();
 router
     .get('/', home)
-    .get('admin', '/admin', koaAuth({name: 'admin', pass: 'test'}), admin_home, );
+    .get('admin', '/admin', koaAuth({ name: process.env.BASIC_USERNAME, pass: process.env.BASIC_PASSWORD }), admin_home,);
 
 app.use(koaBody())
 app.use(router.routes());
 
-app.listen(3000);
+app.listen(process.env.HTTP_PORT || 80);
 console.log('Application has started');
