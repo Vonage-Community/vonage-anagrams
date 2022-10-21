@@ -24,5 +24,5 @@ router
 app.use(koaBody())
 app.use(router.routes());
 
-app.listen(process.env.HTTP_PORT || 80);
+app.listen(process.env.PORT || 3000);
 console.log('Application has started');
