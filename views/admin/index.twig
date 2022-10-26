@@ -86,5 +86,38 @@
         <label>Solution:</label> <input name="solution" type="text" style="width: 100%"><br />
         <input type="submit" value="Save Anagram">
     </form>
+
+    <h1>Numbers Management</h1>
+
+    <h2>Registered Numbers</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Notify?</th>
+                <th>Actions</th>
+            </tr>
+        <thead>
+        {% for number in mobileNumbers %}
+        <tr>
+            <td>{{ number.mobile_number}}
+            <td>
+                {% if number.notify %}
+                    <span class="material-symbols-outlined">done_outline</span>
+                {% else %}
+                    <span class="material-symbols-outlined">cancel</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="/admin/delete_number?id={{number.id}}">
+                    <span class="material-symbols-outlined">delete</span></td>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <form method="post" action="/admin/notify">
+        <input type="submit" value="Notify of Anagram Change">
+    </form>
 </body>
 </html>
