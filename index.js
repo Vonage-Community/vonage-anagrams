@@ -30,9 +30,7 @@ const vonage = new Vonage({
 
 let smsFromNumber;
 async function formatSMSNumber() {
-    if (smsFromNumber == 'undefined' && process.env.VONAGE_FROM) {
-        smsFromNumber = await vonage.numberInsights.basicLookup(process.env.VONAGE_FROM);
-    }
+    smsFromNumber = await vonage.numberInsights.basicLookup(process.env.VONAGE_FROM);
 }
 if (process.env.VONAGE_FROM) {
     formatSMSNumber();
@@ -72,7 +70,3 @@ app.use(router.routes());
 
 app.listen(process.env.PORT || 3000);
 console.log('Application has started');
-
-module.exports = {
-    formatSMSNumber
-}
