@@ -1,5 +1,6 @@
 const { Vonage } = require('@vonage/server-sdk');
 const { SMS } = require('@vonage/messages/dist/classes/SMS/SMS');
+const { Op } = require('sequelize');
 const models = require('./../models');
 const Anagram = models.Anagram;
 const Mobile = models.Mobile;
