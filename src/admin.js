@@ -45,6 +45,11 @@ module.exports = {
         }
         ctx.redirect('/admin');
     },
+
+    async admin_clear_anagram(ctx) {
+        await Anagram.update({ current: false }, { where: { id: { [Op.gt]: 0 } } });
+        ctx.redirect('/admin');
+    },
     
     async admin_delete_number(ctx) {
         const mobile = await Mobile.findByPk(ctx.request.query.id);

@@ -44,7 +44,13 @@
 <body>
     <img id="logo" src="images/VonageLogo_Primary_White.png">
 
-    <h1 id="anagram">{{ currentAnagram.anagram }}</h1>
+    <h1 id="anagram">
+        {% if currentAnagram %}
+            {{ currentAnagram.anagram }}
+        {% else %}
+            Check back soon for the next anagram!
+        {% endif %}
+    </h1>
 
     {% if sms_number %}
     <h2 id="instructions">
