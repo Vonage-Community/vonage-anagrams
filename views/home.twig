@@ -55,7 +55,7 @@
     {% if sms_number %}
     <h2 id="instructions">
         Want notified when the anagram changes? Text REGISTER to <br/> 
-        +{{ sms_number.country_prefix }} {{ sms_number.national_format_number }}
+        {{ sms_number.national_format_number }}
     </h2>
     {% endif %}
 
