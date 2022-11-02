@@ -1,0 +1,64 @@
+<html>
+<head>
+    <style>
+        html {
+            background-color: black;
+            color: white;
+        }
+
+        #rocket {
+            position: absolute;
+            right: 0px;
+            bottom: 0px;
+            width: 300px;
+            height: auto;
+        }
+
+        #anagram {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -100%);
+            font-size: 4.5em;
+            text-align: center;
+        }
+
+        #instructions {
+            position: absolute;
+            top: 75%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        #logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            height: 75px;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <img id="logo" src="images/VonageLogo_Primary_White.png">
+
+    <h1 id="anagram">
+        {% if currentAnagram %}
+            {{ currentAnagram.anagram }}
+        {% else %}
+            Check back soon for the next anagram!
+        {% endif %}
+    </h1>
+
+    {% if sms_number %}
+    <h2 id="instructions">
+        Want notified when the anagram changes? Text REGISTER to <br/> 
+        {{ sms_number.national_format_number }}
+    </h2>
+    {% endif %}
+
+    <img id="rocket" src="images/Rocket_Toolbox.png">
+</body>
+</html>

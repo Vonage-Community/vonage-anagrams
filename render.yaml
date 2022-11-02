@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: anagrams
+    env: docker
+    repo: https://github.com/Vonage-Community/vonage-anagrams
+    rootDir: /
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: BASIC_USERNAME
+        sync: false
+      - key: BASIC_PASSWORD
+        sync: false
+      - key: DB_DSN
+        fromDatabase:
+          name: anagrams_db
+          property: connectionString
+      - key: VONAGE_API_KEY
+        sync: false
+      - key: VONAGE_API_SECRET
+        sync: false
+      - key: VONAGE_FROM
+        sync: false
+      - key: VONAGE_APPLICATION_ID
+        sync: false
+      - key: VONAGE_PRIVATE_KEY
+        sync: false
+
+databases:
+  - name: anagrams_db
+    databaseName: anagrams

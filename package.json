@@ -1,0 +1,37 @@
+{
+  "engines": {
+    "node": ">=14"
+  },
+  "dependencies": {
+    "@koa/router": "^12.0.0",
+    "@vonage/server-sdk": "^3.0.0-alpha.7",
+    "@vonage/video": "^0.8.9",
+    "dotenv": "^16.0.3",
+    "koa": "^2.13.4",
+    "koa-basic-auth": "^4.0.0",
+    "koa-body": "^5.0.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-mount": "^4.0.0",
+    "koa-static": "^5.0.0",
+    "koa-views": "^8.0.0",
+    "pg": "^8.8.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.25.3",
+    "twig": "^1.15.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20",
+    "sequelize-cli": "^6.5.1"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "**/test/**",
+      "**/docs/**"
+    ],
+    "delay": 2500
+  },
+  "scripts": {
+    "migrate": "npx sequelize-cli db:migrate",
+    "run-dev": "npx nodemon index.js"
+  }
+}

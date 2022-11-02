@@ -1,0 +1,126 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        body {
+            max-width: 100%;
+        }
+
+        .material-symbols-outlined {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;  /* Preferred icon size */
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+
+            /* Support for all WebKit browsers. */
+            -webkit-font-smoothing: antialiased;
+            /* Support for Safari and Chrome. */
+            text-rendering: optimizeLegibility;
+
+            /* Support for Firefox. */
+            -moz-osx-font-smoothing: grayscale;
+
+            /* Support for IE. */
+            font-feature-settings: 'liga';
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Anagrams Management</h1>
+
+    <form method="POST" encoding="application/x-www-form-urlencoded" action="/admin/clear_anagram">
+        <input type="submit" value="Clear Current">
+    </form>
+    <h2>Loaded Anagrams</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Current?</th>
+                <th>Used?</th>
+                <th>Actions</th>
+                <th>Anagram</th>
+                <th>Solution</th>
+            </tr>
+        <thead>
+        {% for anagram in anagrams %}
+        <tr>
+            <td>
+                {% if anagram.current %}
+                    <span class="material-symbols-outlined">done_outline</span>
+                {% else %}
+                    <span class="material-symbols-outlined">cancel</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if anagram.used %}
+                    <span class="material-symbols-outlined">done_outline</span>
+                {% else %}
+                    <span class="material-symbols-outlined">cancel</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="/admin/setCurrent?id={{anagram.id}}">
+                    <span class="material-symbols-outlined">add_box</span>
+                </a>
+                |
+                <a href="/admin/delete?id={{anagram.id}}">
+                    <span class="material-symbols-outlined">delete</span></td>
+                </a>
+            <td>{{ anagram.anagram }}</td>
+            <td>{{ anagram.solution }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Add New Anagram</h2>
+    <form method="POST" encoding="application/x-www-form-urlencoded">
+        <label>Anagram:</label> <input name="anagram" type="text" style="width: 100%"><br />
+        <label>Solution:</label> <input name="solution" type="text" style="width: 100%"><br />
+        <input type="submit" value="Save Anagram">
+    </form>
+
+    <h1>Numbers Management</h1>
+
+    <h2>Registered Numbers</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Notify?</th>
+                <th>Actions</th>
+            </tr>
+        <thead>
+        {% for number in mobileNumbers %}
+        <tr>
+            <td>{{ number.mobile_number}}
+            <td>
+                {% if number.notify %}
+                    <span class="material-symbols-outlined">done_outline</span>
+                {% else %}
+                    <span class="material-symbols-outlined">cancel</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="/admin/delete_number?id={{number.id}}">
+                    <span class="material-symbols-outlined">delete</span></td>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <form method="post" action="/admin/notify">
+        <input type="submit" value="Notify of Anagram Change">
+    </form>
+</body>
+</html>
