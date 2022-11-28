@@ -122,5 +122,14 @@
     <form method="post" action="/admin/notify">
         <input type="submit" value="Notify of Anagram Change">
     </form>
+
+    <h2>App Management</h2>
+    <form method="POST" encoding="application/x-www-form-urlencoded" action="/admin/admin_update_callbacks">
+        <div>
+            <strong>Current Message Inbound</strong> {{ messageInboundUrl }}</br>
+            <strong>Current Message Status</strong> {{ messageStatusUrl }}</br>
+        </div>
+        <input type="submit" value="Update callbacks">
+    </form>
 </body>
 </html>

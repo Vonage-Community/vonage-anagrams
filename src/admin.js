@@ -24,7 +24,10 @@ module.exports = {
             ]
         });
         const mobileNumbers = await Mobile.findAll();
-        await ctx.render('admin/index', { anagrams, mobileNumbers });
+
+        const application = await vonage.applications.getApplication(process.env.VONAGE_APPLICATION_ID);
+
+        await ctx.render('admin/index', { anagrams, mobileNumbers, messageInboundUrl: application.capabilities.messages.webhooks.inbound_url.address, messageStatusUrl: application.capabilities.messages.webhooks.status_url.address });
     },
     
     async admin_set_current(ctx) {
@@ -71,5 +74,24 @@ module.exports = {
             );
         });
         ctx.redirect('/admin');
+    },
+
+    async admin_update_callbacks(ctx) {
+        await vonage.applications.getApplication(process.env.VONAGE_APPLICATION_ID)
+            .then(resp => {
+                resp.capabilities.messages.webhooks.inbound_url = { address: ctx.request.header.origin + '/events/messages', http_method: 'POST'};
+                resp.capabilities.messages.webhooks.status_url = { address: ctx.request.header.origin + '/events/messages/status', http_method: 'POST'};
+
+                vonage.applications.updateApplication(resp)
+                    .then(resp => {
+                        console.log('Updated webhooks')
+                    })
+                    .catch(resp => {
+                        console.log('There was an error updating the webhooks');
+                        console.error(resp);
+                        console.error(resp.response.data)
+                    })
+            })
+            ctx.redirect('/admin');
     }
 }

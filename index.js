@@ -64,6 +64,7 @@ router
     .post('admin_clear_anagram', '/admin/clear_anagram', koaAuth({ name: process.env.BASIC_USERNAME, pass: process.env.BASIC_PASSWORD }), koaBody({ multipart: true }), admin.admin_clear_anagram,)
     .get('admin_delete_number', '/admin/delete_number', koaAuth({ name: process.env.BASIC_USERNAME, pass: process.env.BASIC_PASSWORD }), koaBody({ multipart: true }), admin.admin_delete_number,)
     .post('admin_notify', '/admin/notify', koaAuth({ name: process.env.BASIC_USERNAME, pass: process.env.BASIC_PASSWORD }), koaBody({ multipart: true }), admin.admin_notify,)
+    .post('admin_update_callbacks', '/admin/admin_update_callbacks', koaAuth({ name: process.env.BASIC_USERNAME, pass: process.env.BASIC_PASSWORD }), koaBody({ multipart: true }), admin.admin_update_callbacks,)
     .post('messages_inbound', '/events/messages', koaBody({ multipart: true }), messages.messages_inbound,)
     .post('messages_status', '/events/messages/status', koaBody({ multipart: true }), messages.messages_status,);
 
