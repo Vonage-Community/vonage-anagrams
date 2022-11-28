@@ -1,19 +1,43 @@
-const { Vonage } = require('@vonage/server-sdk');
 const { SMS } = require('@vonage/messages/dist/classes/SMS/SMS');
 const { Op } = require('sequelize');
-const models = require('./../models');
-const Anagram = models.Anagram;
-const Mobile = models.Mobile;
 
-const vonage = new Vonage({
-    apiKey: process.env.VONAGE_API_KEY,
-    apiSecret: process.env.VONAGE_API_SECRET,
-    privateKey: Buffer.from(process.env.VONAGE_PRIVATE_KEY, 'base64'),
-    applicationId: process.env.VONAGE_APPLICATION_ID,
-});
+function makeId(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+async function setApplicationData(ctx, AppConfig, applicationId, privateKeyString) {
+    const appIdResult = await AppConfig.findOrCreate({where: { 'configKey': 'VONAGE_APPLICATION_ID'}});
+    const appId = appIdResult[0];
+
+    await AppConfig.update(
+        { configValue: applicationId },
+        { where: { id: appId.id } }
+    );
+
+    const privateKeyResult = await AppConfig.findOrCreate({where: { 'configKey': 'VONAGE_PRIVATE_KEY'}});
+    const privateKey = privateKeyResult[0];
+
+    await AppConfig.update(
+        { configValue: Buffer.from(privateKeyString, 'ascii').toString('base64') },
+        { where: { id: privateKey.id } }
+    ).catch(err => console.log(err));
+
+    await ctx.deps.refreshAppConfig();
+    await ctx.deps.refreshVonageClient(ctx.deps.appConfigData);
+}
 
 module.exports = {
     async admin_home(ctx) {
+        const Anagram = ctx.deps.models.Anagram;
+        const Mobile = ctx.deps.models.Mobile;
+        const vonage = ctx.deps.vonage;
+
         if (ctx.request.body.anagram && ctx.request.body.solution) {
             const newAnagram = await Anagram.create({ anagram: ctx.request.body.anagram, solution: ctx.request.body.solution, current: false, used: false });
         }
@@ -25,12 +49,46 @@ module.exports = {
         });
         const mobileNumbers = await Mobile.findAll();
 
-        const application = await vonage.applications.getApplication(process.env.VONAGE_APPLICATION_ID);
+        const applicationId = ctx.deps.appConfigData.VONAGE_APPLICATION_ID;
+        let applications;
+        let availableNumbers = [];
+        let application;
+        let applicationNumbers = [];
 
-        await ctx.render('admin/index', { anagrams, mobileNumbers, messageInboundUrl: application.capabilities.messages.webhooks.inbound_url.address, messageStatusUrl: application.capabilities.messages.webhooks.status_url.address });
+        if (applicationId) {
+            application = await vonage.applications.getApplication(applicationId)
+                .then(resp => resp)
+                .catch(err => {
+                    console.error('The application configured does not exist');
+                });
+        } else {
+            applications = await vonage.applications.listApplications();
+        }
+
+        await vonage.numbers.getOwnedNumbers({hasApplication: true})
+            .then(resp => {
+                resp.numbers.forEach(number => {
+                    if (number.app_id && number.app_id === applicationId) {
+                        applicationNumbers.push(number)
+                    } else {
+                        availableNumbers.push(number)
+                    }
+                })
+            })
+
+        await ctx.render('admin/index', {
+            anagrams,
+            mobileNumbers,
+            application,
+            applications: applications?._embedded?.applications || null,
+            fromNumber: ctx.deps.appConfigData.VONAGE_FROM,
+            applicationNumbers,
+            availableNumbers,
+         });
     },
     
     async admin_set_current(ctx) {
+        const Anagram = ctx.deps.models.Anagram;
         const anagram = await Anagram.findByPk(ctx.request.query.id);
         if (anagram) {
             await Anagram.update({ current: false }, { where: { id: { [Op.gt]: 0 } } });
@@ -42,6 +100,7 @@ module.exports = {
     },
     
     async admin_delete_anagram(ctx) {
+        const Anagram = ctx.deps.models.Anagram;
         const anagram = await Anagram.findByPk(ctx.request.query.id);
         if (anagram) {
             Anagram.destroy({ where: { id: ctx.request.query.id } });
@@ -50,11 +109,13 @@ module.exports = {
     },
 
     async admin_clear_anagram(ctx) {
+        const Anagram = ctx.deps.models.Anagram;
         await Anagram.update({ current: false }, { where: { id: { [Op.gt]: 0 } } });
         ctx.redirect('/admin');
     },
     
     async admin_delete_number(ctx) {
+        const Mobile = ctx.deps.models.Mobile;
         const mobile = await Mobile.findByPk(ctx.request.query.id);
         if (mobile) {
             mobile.destroy({ where: { id: ctx.request.query.id } });
@@ -63,6 +124,9 @@ module.exports = {
     },
     
     async admin_notify(ctx) {
+        const Mobile = ctx.deps.models.Mobile;
+        const vonage = ctx.deps.vonage;
+
         const numbers = await Mobile.findAll({ where: { notify: true } });
         numbers.forEach(number => {
             vonage.messages.send(
@@ -77,8 +141,19 @@ module.exports = {
     },
 
     async admin_update_callbacks(ctx) {
-        await vonage.applications.getApplication(process.env.VONAGE_APPLICATION_ID)
+        const vonage = ctx.deps.vonage;
+
+        await vonage.applications.getApplication(ctx.deps.appConfigData.VONAGE_APPLICATION_ID)
             .then(resp => {
+                if (!resp.capabilities.messages) {
+                    resp.capabilities.messages = {
+                        webhooks: {
+                            inbound_url: { address: '', http_post: ''},
+                            status_url: { address: '', http_post: ''},
+                        }
+                    }
+                }
+
                 resp.capabilities.messages.webhooks.inbound_url = { address: ctx.request.header.origin + '/events/messages', http_method: 'POST'};
                 resp.capabilities.messages.webhooks.status_url = { address: ctx.request.header.origin + '/events/messages/status', http_method: 'POST'};
 
@@ -93,5 +168,56 @@ module.exports = {
                     })
             })
             ctx.redirect('/admin');
+    },
+
+    async admin_set_application(ctx) {
+        const AppConfig = ctx.deps.models.AppConfig;
+        setApplicationData(ctx, AppConfig, ctx.request.body.application, ctx.request.body.privateKey);
+        ctx.redirect('/admin');
+    },
+
+    async admin_assign_number(ctx) {
+        const AppConfig = ctx.deps.models.AppConfig;
+        const vonage = ctx.deps.vonage;
+
+        await vonage.numbers.updateNumber({
+            country: 'US',
+            msisdn: ctx.request.body.fromNumber,
+            applicationId: ctx.deps.appConfigData.VONAGE_APPLICATION_ID
+        })
+            .then(async (resp) => {
+                const result = await AppConfig.findOrCreate({where: { 'configKey': 'VONAGE_FROM'}});
+                const fromNumber = result[0];
+        
+                await AppConfig.update(
+                    { configValue: ctx.request.body.fromNumber },
+                    { where: { id: fromNumber.id } }
+                );
+                await ctx.deps.refreshAppConfig();
+            })
+        
+
+        ctx.redirect('/admin');
+    },
+
+    async admin_create_application(ctx) {
+        const AppConfig = ctx.deps.models.AppConfig;
+        const vonage = ctx.deps.vonage;
+
+        await vonage.applications.createApplication({
+            name: 'vonage-anagram-' + makeId(6),
+            capabilities: {
+                messages: {
+                    webhooks: {
+                        inbound_url: { address: ctx.request.header.origin + '/events/messages', http_method: 'POST'},
+                        status_url: { address: ctx.request.header.origin + '/events/messages/status', http_method: 'POST'},
+                    }
+                }
+            }
+        })
+            .then(async (resp) => {
+                await setApplicationData(ctx, AppConfig, resp.id, resp.keys.private_key);
+                ctx.redirect('/admin')
+            })
     }
 }

@@ -123,13 +123,65 @@
         <input type="submit" value="Notify of Anagram Change">
     </form>
 
-    <h2>App Management</h2>
-    <form method="POST" encoding="application/x-www-form-urlencoded" action="/admin/admin_update_callbacks">
-        <div>
-            <strong>Current Message Inbound</strong> {{ messageInboundUrl }}</br>
-            <strong>Current Message Status</strong> {{ messageStatusUrl }}</br>
-        </div>
-        <input type="submit" value="Update callbacks">
-    </form>
+    <h1>Vonage App Management</h1>
+
+    <h2>Application Setup</h2>
+    {% if application %}
+        <strong>Currently configured application:</strong> {{ application.name }} ({{application.id}})
+
+        <h2>Callback Management</h2>
+        <form method="POST" encoding="application/x-www-form-urlencoded" action="/admin/admin_update_callbacks">
+            <div>
+                <strong>Current Message Inbound: </strong> {{ application.capabilities.messages.webhooks.inbound_url.address }}</br>
+                <strong>Current Message Status: </strong> {{ application.capabilities.messages.webhooks.status_url.address }}</br>
+            </div>
+            <input type="submit" value="Update callbacks to Anagram Application">
+        </form>
+
+        <h2>Messages API Number Config</h2>
+        {% if fromNumber %}
+            <strong>Currently configured number:</strong> {{ fromNumber }}
+        {% else %}
+            <form method="POST" encoding="application/x-www-form-urlencoded" action="/admin/admin_assign_number">
+                <strong>Please select a number to assign to this application:</strong>
+
+                {% set numbers = [] %}
+                {% if applicationNumbers %}
+                    {% set numbers = applicationNumbers %}
+                {% else %}
+                    {% set numbers = availableNumbers %}
+                {% endif %}
+
+                <select name="fromNumber">
+                    {% for number in numbers %}
+                    <option value="{{number.msisdn}}">
+                        {{ number.msisdn }}
+                        {% if number.app_id %}
+                            {% if number.app_id != application.id %}
+                            (Number is assigned to {{ number.app_id }})
+                            {% endif %}
+                        {% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Assign Number">
+            </form>
+        {% endif %}
+    {% else %}
+        <form method="POST" encoding="application/x-www-form-urlencoded" action="/admin/admin_set_application">
+            <strong>Please select an application to use:</strong>
+            <select name="application">
+                {% for applicationData in applications %}
+                <option value="{{applicationData.id}}">{{ applicationData.name }}</option>
+                {% endfor %}
+            </select>
+            <strong>Private Key:</strong>
+            <textarea name="private_key" required></textarea>
+            <input type="submit" value="Assign Application">
+        </form>
+        <form method="POST" encoding="application/x-www-form-urlencoded" action="/admin/admin_create_application">
+            <input type="submit" value="Create New Application">
+        </form>
+    {% endif %}
 </body>
 </html>

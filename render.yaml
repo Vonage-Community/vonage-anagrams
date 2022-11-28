@@ -19,12 +19,6 @@ services:
         sync: false
       - key: VONAGE_API_SECRET
         sync: false
-      - key: VONAGE_FROM
-        sync: false
-      - key: VONAGE_APPLICATION_ID
-        sync: false
-      - key: VONAGE_PRIVATE_KEY
-        sync: false
 
 databases:
   - name: anagrams_db

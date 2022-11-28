@@ -3,15 +3,11 @@ const { SMS } = require('@vonage/messages/dist/classes/SMS/SMS');
 const models = require('./../models');
 const Mobile = models.Mobile;
 
-const vonage = new Vonage({
-    apiKey: process.env.VONAGE_API_KEY,
-    apiSecret: process.env.VONAGE_API_SECRET,
-    privateKey: Buffer.from(process.env.VONAGE_PRIVATE_KEY, 'base64'),
-    applicationId: process.env.VONAGE_APPLICATION_ID,
-});
 
 module.exports = {
     async messages_inbound(ctx) {
+        const vonage = ctx.deps.vonage;
+
         if (ctx.request.body.text) {
             const text = ctx.request.body.text.toLowerCase();
             const mobile = await Mobile.findOne({ where: { mobile_number: ctx.request.body.from } });
