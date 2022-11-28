@@ -3,7 +3,7 @@ services:
     name: anagrams
     env: docker
     repo: https://github.com/Vonage-Community/vonage-anagrams
-    rootDir: /
+    rootDir: ./
     envVars:
       - key: PORT
         value: 3000
