@@ -47,7 +47,7 @@ async function checkForMigrations() {
     }
     
     for(let i = 0, c = migrations.length; i < c; i++){
-       let migration = require(__dirname + '/../migrations/' + migrations[i]);
+       let migration = require(__dirname + '/migrations/' + migrations[i]);
        migration.up(sequelize.queryInterface, Sequelize);
        await sequelize.query("INSERT INTO \"SequelizeMeta\" VALUES(:name)", {type: Sequelize.QueryTypes.INSERT, replacements: {name: migrations[i]}})
     }
