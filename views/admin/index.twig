@@ -143,8 +143,6 @@
             <strong>Currently configured number:</strong> {{ fromNumber }}
         {% else %}
             <form method="POST" encoding="application/x-www-form-urlencoded" action="/admin/admin_assign_number">
-                <strong>Please select a number to assign to this application:</strong>
-
                 {% set numbers = [] %}
                 {% if applicationNumbers %}
                     {% set numbers = applicationNumbers %}
@@ -152,6 +150,8 @@
                     {% set numbers = availableNumbers %}
                 {% endif %}
 
+                {% if numbers|length > 0 %}
+                <strong>Please select a number to assign to this application:</strong>
                 <select name="fromNumber">
                     {% for number in numbers %}
                     <option value="{{number.msisdn}}">
@@ -165,6 +165,9 @@
                     {% endfor %}
                 </select>
                 <input type="submit" value="Assign Number">
+                {% else %}
+                There are currently no numbers available. Please purchase a number on the API Dashboard and refresh this page.
+                {% endif %}
             </form>
         {% endif %}
     {% else %}

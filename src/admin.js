@@ -65,15 +65,17 @@ module.exports = {
             applications = await vonage.applications.listApplications();
         }
 
-        await vonage.numbers.getOwnedNumbers({hasApplication: true})
+        await vonage.numbers.getOwnedNumbers({hasApplication: 0})
             .then(resp => {
-                resp.numbers.forEach(number => {
-                    if (number.app_id && number.app_id === applicationId) {
-                        applicationNumbers.push(number)
-                    } else {
-                        availableNumbers.push(number)
-                    }
-                })
+                if (resp.numbers) {
+                    resp.numbers.forEach(number => {
+                        if (number.app_id && number.app_id === applicationId) {
+                            applicationNumbers.push(number)
+                        } else {
+                            availableNumbers.push(number)
+                        }
+                    })
+                }
             })
 
         await ctx.render('admin/index', {
