@@ -18,14 +18,34 @@ const path = require('path');
 const { Vonage } = require('@vonage/server-sdk');
 const admin = require('./src/admin');
 const messages = require('./src/messages');
+const fs = require('fs');
 
 const sequelize = new Sequelize(process.env.DB_DSN);
 const connectToDatabase = async () => {
     sequelize.authenticate()
-    .then(() => { console.log("Connected to the database"); })
+    .then(async () => { console.log("Connected to the database"); await checkForMigrations(); })
     .catch(err => { console.error(err); });
 }
 connectToDatabase();
+
+async function checkForMigrations() {
+    let migrations = fs.readdirSync(__dirname + '/migrations');
+    let completedMigrations = await sequelize.query("SELECT * FROM \"SequelizeMeta\"", {type: Sequelize.QueryTypes.SELECT});
+    for (let name in completedMigrations) {
+        if (completedMigrations.hasOwnProperty(name)) {
+            let index = migrations.indexOf(completedMigrations[name].name);
+            if (index !== -1) {
+                migrations.splice(index, 1);
+            }
+        }
+    }
+    
+    for(let i = 0, c = migrations.length; i < c; i++){
+       let migration = require(__dirname + '/../migrations/' + migrations[i]);
+       migration.up(sequelize.queryInterface, Sequelize);
+       await sequelize.query("INSERT INTO \"SequelizeMeta\" VALUES(:name)", {type: Sequelize.QueryTypes.INSERT, replacements: {name: migrations[i]}})
+    }
+}
 
 const appConfig = {};
 const refreshAppConfig = async () => {
