@@ -61,7 +61,7 @@ async function bootApplication() {
             appConfig[row.configKey] = row.configValue;
         })
     }
-    refreshAppConfig();
+    await refreshAppConfig();
     
     let vonage;
     const refreshVonageClient = async(appConfig) => {
@@ -83,7 +83,7 @@ async function bootApplication() {
     
     let smsFromNumber;
     async function formatSMSNumber() {
-        smsFromNumber = await vonage.numberInsights.basicLookup(process.env.VONAGE_FROM);
+        smsFromNumber = await vonage.numberInsights.basicLookup(appConfig.VONAGE_FROM);
     }
     if (appConfig.VONAGE_FROM) {
         formatSMSNumber();
