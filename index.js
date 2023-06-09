@@ -136,7 +136,7 @@ async function bootApplication() {
         .post('admin_create_application', '/admin/admin_create_application', koaAuth({ name: process.env.BASIC_USERNAME, pass: process.env.BASIC_PASSWORD }), koaBody({ multipart: true }), admin.admin_create_application,)
         .post('messages_inbound', '/events/messages', koaBody({ multipart: true }), messages.messages_inbound,)
         .post('messages_status', '/events/messages/status', koaBody({ multipart: true }), messages.messages_status,)
-        .post('voice_answer', '/events/voice', koaBody(), voice.voice_inbound);
+        .post('voice_answer', '/events/voice', koaBody(), voice.voice_inbound)
         .post('voice_events', '/events/voice_events', koaBody(), voice.voice_events);
     
     app.use(router.routes());
