@@ -158,6 +158,7 @@ module.exports = {
 
                 resp.capabilities.messages.webhooks.inbound_url = { address: ctx.request.header.origin + '/events/messages', http_method: 'POST'};
                 resp.capabilities.messages.webhooks.status_url = { address: ctx.request.header.origin + '/events/messages/status', http_method: 'POST'};
+                resp.capabilities.voice.webhooks.answer_url = { address: ctx.request.header.origin + '/events/voice', http_method: 'POST'}
 
                 vonage.applications.updateApplication(resp)
                     .then(resp => {
@@ -213,6 +214,11 @@ module.exports = {
                     webhooks: {
                         inbound_url: { address: ctx.request.header.origin + '/events/messages', http_method: 'POST'},
                         status_url: { address: ctx.request.header.origin + '/events/messages/status', http_method: 'POST'},
+                    },
+                },
+                voice: {
+                    webhooks: {
+                        answer_url: { address: ctx.request.header.origin + '/events/voice', http_method: 'POST'},
                     }
                 }
             }

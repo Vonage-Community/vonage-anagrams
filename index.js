@@ -18,6 +18,7 @@ const path = require('path');
 const { Vonage } = require('@vonage/server-sdk');
 const admin = require('./src/admin');
 const messages = require('./src/messages');
+const voice = require('./src/voice')
 const fs = require('fs');
 
 const sequelize = new Sequelize(process.env.DB_DSN);
@@ -134,7 +135,8 @@ async function bootApplication() {
         .post('admin_assign_number', '/admin/admin_assign_number', koaAuth({ name: process.env.BASIC_USERNAME, pass: process.env.BASIC_PASSWORD }), koaBody({ multipart: true }), admin.admin_assign_number,)
         .post('admin_create_application', '/admin/admin_create_application', koaAuth({ name: process.env.BASIC_USERNAME, pass: process.env.BASIC_PASSWORD }), koaBody({ multipart: true }), admin.admin_create_application,)
         .post('messages_inbound', '/events/messages', koaBody({ multipart: true }), messages.messages_inbound,)
-        .post('messages_status', '/events/messages/status', koaBody({ multipart: true }), messages.messages_status,);
+        .post('messages_status', '/events/messages/status', koaBody({ multipart: true }), messages.messages_status,)
+        .post('voice_answer', '/events/voice', koaBody(), voice.voice_inbound);
     
     app.use(router.routes());
     
