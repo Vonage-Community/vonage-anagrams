@@ -137,6 +137,7 @@ async function bootApplication() {
         .post('messages_inbound', '/events/messages', koaBody({ multipart: true }), messages.messages_inbound,)
         .post('messages_status', '/events/messages/status', koaBody({ multipart: true }), messages.messages_status,)
         .post('voice_answer', '/events/voice', koaBody(), voice.voice_inbound);
+        .post('voice_events', '/events/voice_events', koaBody(), voice.voice_events);
     
     app.use(router.routes());
     
