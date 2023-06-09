@@ -18,6 +18,6 @@ module.exports = {
     async voice_events(ctx) {
         console.log(ctx.request.body)
         console.log(ctx.request.query)
-        ctx.body = OK;
+        ctx.body = 'OK';
     }
 }
