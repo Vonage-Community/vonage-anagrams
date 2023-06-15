@@ -82,15 +82,17 @@ async function bootApplication() {
     };
     refreshVonageClient(appConfig);
     
-    let smsFromNumber;
-    async function formatSMSNumber() {
-        smsFromNumber = await vonage.numberInsights.basicLookup(appConfig.VONAGE_FROM);
+    async function formatSMSNumber(number) {
+        const res = await vonage.numberInsights.basicLookup(number);
+        return res;
     }
-    if (appConfig.VONAGE_FROM) {
-        formatSMSNumber();
-    }
-    
+
     async function home(ctx) {
+        let smsFromNumber = null;
+        if (appConfig.VONAGE_FROM) {
+            smsFromNumber = await formatSMSNumber(appConfig.VONAGE_FROM)
+        }
+
         const currentAnagram = await Anagram.findOne({ where: { current: true } });
         await ctx.render('home', { currentAnagram, sms_number: smsFromNumber });
     };
