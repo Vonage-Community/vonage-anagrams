@@ -126,16 +126,18 @@ module.exports = {
     },
     
     async admin_notify(ctx) {
+        const AppConfig = ctx.deps.models.AppConfig;
         const Mobile = ctx.deps.models.Mobile;
         const vonage = ctx.deps.vonage;
 
         const numbers = await Mobile.findAll({ where: { notify: true } });
+        const fromNumber = await AppConfig.findOne({ where: { configKey: "VONAGE_FROM"} });
         numbers.forEach(number => {
             vonage.messages.send(
                 new SMS(
                     "This is Vonage! We just want to let you know the anagram has changed. Good luck!",
                     number.mobile_number,
-                    process.env.VONAGE_FROM
+                    fromNumber.configValue,
                 )
             );
         });
