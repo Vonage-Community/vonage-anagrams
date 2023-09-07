@@ -49,9 +49,10 @@
     {% include 'admin/components/anagram_management/add_anagram.twig' %}
 
     <h2>Load CSV File</h2>
-    <form method="POST" encoding="multipart/form-data" action="/admin/admin_upload_csv">
+    <form id="anagram_upload" hx-post="/admin/components/anagram_management/upload" enctype="multipart/form-data">
         <input type="file" name="csv_file" />
         <input type="submit" value="Upload">
+        <progress id='progress' value='0' max='100'></progress>
     </form>
 
     <h1>Numbers Management</h1>
@@ -61,5 +62,10 @@
     <div hx-get="/admin/components/app_management" hx-trigger="load, reloadAppManagement"></div>
 
     <script src="https://unpkg.com/htmx.org@1.9.5"></script>
+    <script>
+        htmx.on('#anagram_upload', 'htmx:xhr:progress', function(evt) {
+            htmx.find('#progress').setAttribute('value', evt.detail.loaded/evt.detail.total * 100)
+        });
+    </script>
 </body>
 </html>
