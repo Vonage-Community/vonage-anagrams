@@ -1,0 +1,26 @@
+<tr>
+    <td>
+        {% if anagram.current %}
+            <span class="material-symbols-outlined">done_outline</span>
+        {% else %}
+            <span class="material-symbols-outlined">cancel</span>
+        {% endif %}
+    </td>
+    <td>
+        {% if anagram.used %}
+            <span class="material-symbols-outlined">done_outline</span>
+        {% else %}
+            <span class="material-symbols-outlined">cancel</span>
+        {% endif %}
+    </td>
+    <td>
+        <a hx-post="/admin/anagram_management/set_current_anagram?id={{anagram.id}}" hx-trigger="click">
+            <span class="material-symbols-outlined">add_box</span>
+        </a>
+        |
+        <a hx-post="/admin/anagram_management/delete_anagram?id={{anagram.id}}" hx-trigger="click">
+            <span class="material-symbols-outlined">delete</span></td>
+        </a>
+    <td>{{ anagram.anagram }}</td>
+    <td>{{ anagram.solution }}</td>
+</tr>

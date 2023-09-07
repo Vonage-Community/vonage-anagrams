@@ -1,0 +1,44 @@
+<strong>Currently configured application:</strong> {{ application.name }} ({{application.id}})
+
+<h2>Callback Management</h2>
+<form hx-post="/admin/components/app_management/update_callbacks">
+    <div>
+        <strong>Current Message Inbound: </strong> {{ application.capabilities.messages.webhooks.inbound_url.address }}</br>
+        <strong>Current Message Status: </strong> {{ application.capabilities.messages.webhooks.status_url.address }}</br>
+        <strong>Current Voice Answer: </strong> {{ application.capabilities.voice.webhooks.answer_url.address }}</br>
+    </div>
+    <input type="submit" value="Update callbacks to Anagram Application">
+</form>
+
+<h2>Messages API Number Config</h2>
+{% if fromNumber %}
+    <strong>Currently configured number:</strong> {{ fromNumber }}
+{% else %}
+    <form hx-post="/admin/components/app_management/set_number">
+        {% set numbers = [] %}
+        {% if applicationNumbers %}
+            {% set numbers = applicationNumbers %}
+        {% else %}
+            {% set numbers = availableNumbers %}
+        {% endif %}
+
+        {% if numbers|length > 0 %}
+        <strong>Please select a number to assign to this application:</strong>
+        <select name="fromNumber">
+            {% for number in numbers %}
+            <option value="{{number.msisdn}}">
+                {{ number.msisdn }}
+                {% if number.app_id %}
+                    {% if number.app_id != application.id %}
+                    (Number is assigned to {{ number.app_id }})
+                    {% endif %}
+                {% endif %}
+            </option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Assign Number">
+        {% else %}
+        There are currently no numbers available. Please purchase a number on the API Dashboard and refresh this page.
+        {% endif %}
+    </form>
+{% endif %}

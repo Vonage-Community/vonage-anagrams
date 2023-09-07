@@ -1,0 +1,16 @@
+<table border="1">
+    <thead>
+        <tr>
+            <th>Current?</th>
+            <th>Used?</th>
+            <th>Actions</th>
+            <th>Anagram</th>
+            <th>Solution</th>
+        </tr>
+    <thead>
+    <tbody id="anagrams-list">
+    {% for anagram in anagrams %}
+        {% include 'admin/components/anagram_management/anagram_row.twig' with { anagram: anagram } %}
+    {% endfor %}
+    </tbody>
+</table>

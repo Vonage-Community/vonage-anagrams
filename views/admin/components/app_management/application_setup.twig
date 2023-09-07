@@ -1,0 +1,15 @@
+<h2>Application Setup</h2>
+<form hx-post="/admin/components/app_management/set_application">
+    <strong>Please select an application to use:</strong>
+    <select name="application">
+        {% for applicationData in applications %}
+        <option value="{{applicationData.id}}">{{ applicationData.name }}</option>
+        {% endfor %}
+    </select>
+    <strong>Private Key:</strong>
+    <textarea name="private_key" required></textarea>
+    <input type="submit" value="Assign Application">
+</form>
+<form hx-post="/admin/components/app_management/create_application">
+    <input type="submit" value="Create New Application">
+</form>

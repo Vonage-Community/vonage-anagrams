@@ -1,0 +1,65 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        body {
+            max-width: 100%;
+        }
+
+        .material-symbols-outlined {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;  /* Preferred icon size */
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+
+            /* Support for all WebKit browsers. */
+            -webkit-font-smoothing: antialiased;
+            /* Support for Safari and Chrome. */
+            text-rendering: optimizeLegibility;
+
+            /* Support for Firefox. */
+            -moz-osx-font-smoothing: grayscale;
+
+            /* Support for IE. */
+            font-feature-settings: 'liga';
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Anagrams Management</h1>
+
+    <form hx-post="/admin/anagram_management/clear_current_anagram" hx-swap="none">
+        <input type="submit" value="Clear Current">
+    </form>
+    <h2>Loaded Anagrams</h2>
+    <div hx-get="/admin/anagram_management/get_anagrams" hx-trigger="load, newAnagram from:body"></div>
+
+    <h2>Add New Anagram</h2>
+    {% include 'admin/components/anagram_management/add_anagram.twig' %}
+
+    <h2>Load CSV File</h2>
+    <form method="POST" encoding="multipart/form-data" action="/admin/admin_upload_csv">
+        <input type="file" name="csv_file" />
+        <input type="submit" value="Upload">
+    </form>
+
+    <h1>Numbers Management</h1>
+    <div id="numbers-management" hx-get="/admin/components/number_management" hx-trigger="load, reloadNumberManagement"></div>
+
+    <h1>Vonage App Management</h1>
+    <div hx-get="/admin/components/app_management" hx-trigger="load, reloadAppManagement"></div>
+
+    <script src="https://unpkg.com/htmx.org@1.9.5"></script>
+</body>
+</html>

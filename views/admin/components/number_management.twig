@@ -1,0 +1,31 @@
+<h2>Registered Numbers</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Number</th>
+            <th>Notify?</th>
+            <th>Actions</th>
+        </tr>
+    <thead>
+    {% for number in mobileNumbers %}
+    <tr>
+        <td>{{ number.mobile_number}}
+        <td>
+            {% if number.notify %}
+                <span class="material-symbols-outlined">done_outline</span>
+            {% else %}
+                <span class="material-symbols-outlined">cancel</span>
+            {% endif %}
+        </td>
+        <td>
+            <a hx-get="/admin/components/number_management/delete_number?id={{number.id}}">
+                <span class="material-symbols-outlined">delete</span></td>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<form hx-post="/admin/components/number_management/notify">
+    <input type="submit" value="Notify of Anagram Change">
+</form>
+<button hx-get="/admin/components/number_management" hx-indicator="#numbers-management-indicator" hx-target="#numbers-management" id="refresh-numbers-btn">Refresh Numbers</button>
