@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <style>
@@ -36,35 +36,74 @@
     </style>
 </head>
 
-<body>
-    <h1>Anagrams Management</h1>
+<body class="dark:bg-zinc-900 dark:text-slate-200">
+    <div class="p-2">
+        <h1 class="text-3xl font-extrabold dark:text-white">Game Settings</h1>
+    </div>
+    
+    <div class="flex border-b border-slate-300">
+        <div class="grow text-xl font-bold py-2 px-2">
+            Anagram Management
+        </div>
+        <div>
+            <span class="material-symbols-outlined">chevron_right</span>
+        </div>
+    </div>
 
-    <form hx-post="/admin/anagram_management/clear_current_anagram" hx-swap="none">
-        <input type="submit" value="Clear Current">
-    </form>
-    <h2>Loaded Anagrams</h2>
-    <div hx-get="/admin/anagram_management/get_anagrams" hx-trigger="load, newAnagram from:body"></div>
+    <div class="py-2 px-4">
+        <div class="" hx-get="/admin/anagram_management/get_anagrams" hx-trigger="load, newAnagram from:body"></div>
 
-    <h2>Add New Anagram</h2>
-    {% include 'admin/components/anagram_management/add_anagram.twig' %}
+        <div class="hidden border-1 border-zinc-300 py-2 px-4 bg-zinc-700 rounded-xl" id="add-new-anagrams">
+            <h2 class="text-xl font-bold dark:text-white">Add New Anagram</h2>
+            {% include 'admin/components/anagram_management/add_anagram.twig' %}
 
-    <h2>Load CSV File</h2>
-    <form id="anagram_upload" hx-post="/admin/components/anagram_management/upload" enctype="multipart/form-data">
-        <input type="file" name="csv_file" />
-        <input type="submit" value="Upload">
-        <progress id='progress' value='0' max='100'></progress>
-    </form>
+            <h2 class="text-xl font-bold dark:text-white">Load CSV File</h2>
+            <form id="anagram_upload" hx-post="/admin/components/anagram_management/upload" enctype="multipart/form-data">
+                <div class="px-4"><input type="file" name="csv_file" /></div>
+                <div>
+                    <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" type="submit" value="Upload">
+                    <progress id='progress' value='0' max='100'></progress>
+                </div>
+            </form>
 
-    <h1>Numbers Management</h1>
-    <div id="numbers-management" hx-get="/admin/components/number_management" hx-trigger="load, reloadNumberManagement"></div>
+            <div class="w-full text-right">
+                <button id="add-anagram-close-btn" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Close</button>
+            </div>
+        </div>
+    </div>
 
-    <h1>Vonage App Management</h1>
-    <div hx-get="/admin/components/app_management" hx-trigger="load, reloadAppManagement"></div>
+    <div class="flex border-b border-slate-300">
+        <div class="grow text-xl font-bold py-2 px-2 border-bottom-1 border-slate-300">
+            Participants
+        </div>
+        <div>
+            <span class="material-symbols-outlined">chevron_right</span>
+        </div>
+    </div>
 
+    <div id="numbers-management" class="py-2 px-4" hx-get="/admin/components/number_management" hx-trigger="load, reloadNumberManagement"></div>
+
+    <div class="flex border-b border-slate-300">
+        <div class="grow text-xl font-bold py-2 px-2 border-bottom-1 border-slate-300">
+            Application Settings
+        </div>
+        <div>
+            <span class="material-symbols-outlined">chevron_right</span>
+        </div>
+    </div>
+
+    <div class="py-2 px-4" hx-get="/admin/components/app_management" hx-trigger="load, reloadAppManagement"></div>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.5"></script>
     <script>
         htmx.on('#anagram_upload', 'htmx:xhr:progress', function(evt) {
             htmx.find('#progress').setAttribute('value', evt.detail.loaded/evt.detail.total * 100)
+        });
+
+        document.getElementById('add-anagram-close-btn').addEventListener('click', () => {
+            document.getElementById('add-new-anagrams').classList.add('hidden');
         });
     </script>
 </body>

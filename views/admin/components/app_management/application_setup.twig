@@ -1,15 +1,21 @@
-<h2>Application Setup</h2>
+<h2 class="text-xl font-bold dark:text-white">Assign an existing application</h2>
 <form hx-post="/admin/components/app_management/set_application">
-    <strong>Please select an application to use:</strong>
-    <select name="application">
-        {% for applicationData in applications %}
-        <option value="{{applicationData.id}}">{{ applicationData.name }}</option>
-        {% endfor %}
-    </select>
-    <strong>Private Key:</strong>
-    <textarea name="private_key" required></textarea>
-    <input type="submit" value="Assign Application">
+    <div>Please select an application to use:</div>
+    <div class="px-4">
+        <select name="application" class="text-black py-1 px-2">
+            {% for applicationData in applications %}
+            <option value="{{applicationData.id}}">{{ applicationData.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>Private Key:</div>
+    <div class="px-4">
+        <textarea class="w-full h-36" name="private_key" required></textarea>
+        <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" type="submit" value="Assign Application">
+    </div>
 </form>
+
+<h2 class="text-xl font-bold dark:text-white">Assign to a new application</h2>
 <form hx-post="/admin/components/app_management/create_application">
-    <input type="submit" value="Create New Application">
+    <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" type="submit" value="Create New Application">
 </form>

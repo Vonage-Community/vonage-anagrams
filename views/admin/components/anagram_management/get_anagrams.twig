@@ -1,11 +1,11 @@
-<table border="1">
-    <thead>
+<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
         <tr>
-            <th>Current?</th>
-            <th>Used?</th>
-            <th>Actions</th>
-            <th>Anagram</th>
-            <th>Solution</th>
+            <th scope="col" class="px-4 py-2">Current?</th>
+            <th scope="col" class="px-4 py-2">Used?</th>
+            <th scope="col" class="px-4 py-2">Actions</th>
+            <th scope="col" class="px-4 py-2">Anagram</th>
+            <th scope="col" class="px-4 py-2">Solution</th>
         </tr>
     <thead>
     <tbody id="anagrams-list">
@@ -13,4 +13,18 @@
         {% include 'admin/components/anagram_management/anagram_row.twig' with { anagram: anagram } %}
     {% endfor %}
     </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5" class="text-right">
+                <button hx-post="/admin/anagram_management/clear_current_anagram" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Clear Current</button>
+                <button id="add-anagram-btn" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add New Anagrams</button>
+            </td>
+        </tr>
+    </tfoot>
 </table>
+
+<script>
+document.getElementById("add-anagram-btn").addEventListener('click', () => {
+    document.getElementById("add-new-anagrams").classList.remove('hidden');
+})
+</script>

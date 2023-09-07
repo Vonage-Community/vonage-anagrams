@@ -1,31 +1,34 @@
-<h2>Registered Numbers</h2>
-<table border="1">
-    <thead>
+<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
         <tr>
-            <th>Number</th>
-            <th>Notify?</th>
-            <th>Actions</th>
+            <th scope="col" class="px-4 py-2">Number</th>
+            <th scope="col" class="px-4 py-2">Notify?</th>
+            <th scope="col" class="px-4 py-2">Actions</th>
         </tr>
     <thead>
     {% for number in mobileNumbers %}
-    <tr>
-        <td>{{ number.mobile_number}}
-        <td>
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+        <td class="px-6 py-4">{{ number.mobile_number}}
+        <td class="px-6 py-4">
             {% if number.notify %}
                 <span class="material-symbols-outlined">done_outline</span>
             {% else %}
                 <span class="material-symbols-outlined">cancel</span>
             {% endif %}
         </td>
-        <td>
+        <td class="px-6 py-4">
             <a hx-get="/admin/components/number_management/delete_number?id={{number.id}}">
                 <span class="material-symbols-outlined">delete</span></td>
             </a>
         </td>
     </tr>
     {% endfor %}
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-right">
+                <button hx-post="/admin/components/number_management/notify" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Notify of Anagram Change</button>
+                <button hx-get="/admin/components/number_management" hx-target="#numbers-management" id="refresh-numbers-btn" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Refresh Numbers</button>
+            </td>
+        </tr>
+    </tfoot>
 </table>
-<form hx-post="/admin/components/number_management/notify">
-    <input type="submit" value="Notify of Anagram Change">
-</form>
-<button hx-get="/admin/components/number_management" hx-indicator="#numbers-management-indicator" hx-target="#numbers-management" id="refresh-numbers-btn">Refresh Numbers</button>

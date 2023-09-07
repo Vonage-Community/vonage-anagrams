@@ -1,19 +1,19 @@
-<tr>
-    <td>
+<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+    <td class="text-center align-top py-2">
         {% if anagram.current %}
             <span class="material-symbols-outlined">done_outline</span>
         {% else %}
             <span class="material-symbols-outlined">cancel</span>
         {% endif %}
     </td>
-    <td>
+    <td class="text-center align-top py-2">
         {% if anagram.used %}
             <span class="material-symbols-outlined">done_outline</span>
         {% else %}
             <span class="material-symbols-outlined">cancel</span>
         {% endif %}
     </td>
-    <td>
+    <td class="text-center align-top py-2">
         <a hx-post="/admin/anagram_management/set_current_anagram?id={{anagram.id}}" hx-trigger="click">
             <span class="material-symbols-outlined">add_box</span>
         </a>
@@ -21,6 +21,6 @@
         <a hx-post="/admin/anagram_management/delete_anagram?id={{anagram.id}}" hx-trigger="click">
             <span class="material-symbols-outlined">delete</span></td>
         </a>
-    <td>{{ anagram.anagram }}</td>
-    <td>{{ anagram.solution }}</td>
+    <td class="px-6 py-4">{{ anagram.anagram }}</td>
+    <td class="px-6 py-4">{{ anagram.solution }}</td>
 </tr>
