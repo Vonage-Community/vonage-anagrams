@@ -6,8 +6,10 @@ export default function(router) {
     router.post('/admin/components/app_management/set_number', async (req, res) => {
         const vonage = getVonageClient();
 
+        const numberData = await vonage.numbers.getOwnedNumbers({ pattern: req.body.fromNumber });
+
         await vonage.numbers.updateNumber({
-            country: 'US',
+            country: numberData.numbers[0].country,
             msisdn: req.body.fromNumber,
             applicationId: appConfig.VONAGE_APPLICATION_ID
         })
